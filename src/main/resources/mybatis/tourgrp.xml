@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<!-- dev.mvc.sungrp.SungrpDAOInter 패키지에 등록된 interface 명시,
+      패키지명과 인터페이스명은 실제로 존재해야함,
+      Spring이 내부적으로 자동으로 interface를 구현해줌. -->
+<mapper namespace="dev.mvc.tourgrp.TourgrpDAOInter"> 
+  <insert id="create" parameterType="dev.mvc.tourgrp.TourgrpVO">
+    INSERT INTO tourgrp(name, seqno, rdate)
+    VALUES(#{name}, #{seqno}, now())
+  </insert>
+  
+  <!-- 
+  레코드 갯수 만큼 tourgrpVO 객체를 만들어 ArrayList에 저장하여 리턴,
+  List<tourgrpVO> list = new ArrayList<tourgrpVO>(); 
+  -->
+ <select id="list_tourgrpno_asc" resultType="dev.mvc.tourgrp.TourgrpVO">
+    SELECT  tourgrpno, name, seqno, rdate
+    FROM tourgrp
+    ORDER BY tourgrpno ASC
+  </select>
+  
+   <!-- 
+  레코드 갯수 만큼 CategrpVO 객체를 만들어 ArrayList에 저장하여 리턴,
+  List<CategrpVO> list = new ArrayList<CategrpVO>(); 
+  -->
+ <select id="list_seqno_asc" resultType="dev.mvc.tourgrp.TourgrpVO">
+    SELECT  tourgrpno, name, seqno, rdate
+    FROM tourgrp
+    ORDER BY seqno ASC
+  </select>
+  
+  
+  <!-- 조회, id: read, 입력: tourgrpno, 리턴: TourgrpVO -->
+  <select id="read" resultType="dev.mvc.tourgrp.TourgrpVO" parameterType="int">
+    SELECT  tourgrpno, name, seqno, rdate
+    FROM tourgrp
+    WHERE tourgrpno=#{tourgrpno}
+  </select>
+  
+  <!-- 수정, id: update, 입력: CategrpVO, 리턴: int -->
+  <update id="update" parameterType="dev.mvc.tourgrp.TourgrpVO">
+    UPDATE tourgrp
+    SET name=#{name}, seqno=#{seqno}
+    WHERE tourgrpno = #{tourgrpno}
+  </update>
+  
+  <!-- 삭제 처리, id=delete, 입력: PK, 리턴: 삭제된 갯수 int -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM tourgrp
+    WHERE tourgrpno=#{tourgrpno}
+  </delete>
+  
+  <!-- 우선순위 상향 up 10 ▷ 1 -->
+  <update id="update_seqno_up" parameterType="int">
+    UPDATE tourgrp
+    SET seqno = seqno - 1
+    WHERE tourgrpno=#{tourgrpno}
+  </update>
+
+  <!-- 우선순위 하향 down 1 ▷ 10 --> 
+  <update id="update_seqno_down" parameterType="int">
+    UPDATE tourgrp
+    SET seqno = seqno + 1
+    WHERE tourgrpno=#{tourgrpno}
+  </update>
+  
+ 
+  
+ 
+   
+</mapper> 

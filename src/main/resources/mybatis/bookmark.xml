@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<!-- dev.mvc.sungrp.SungrpDAOInter 패키지에 등록된 interface 명시,
+      패키지명과 인터페이스명은 실제로 존재해야함,
+      Spring이 내부적으로 자동으로 interface를 구현해줌. -->
+<mapper namespace="dev.mvc.bookmark.BookmarkDAOInter"> 
+  <insert id="create" parameterType="dev.mvc.bookmark.BookmarkVO">
+    INSERT INTO bookmark(bookmarkno, bookmarkgrpno, name, link, rdate)
+    VALUES(#{bookmarkno}, #{bookmarkgrpno}, #{name}, #{link}, now())
+  </insert>
+
+<!-- 
+  전체 목록
+  레코드 갯수 만큼 CategrpVO 객체를 만들어 ArrayList에 저장하여 리턴,
+  List<CateVO> list = new ArrayList<CateVO>(); 
+  -->
+  <select id="list_all" resultType="dev.mvc.bookmark.BookmarkVO">
+    SELECT bookmarkno, bookmarkgrpno, name, link, rdate
+    FROM bookmark
+    ORDER BY bookmarkno ASC
+  </select>
+
+<!-- 카테고리 그룹별 목록 -->
+  <select id="list_by_bookmarkgrpno" resultType="dev.mvc.bookmark.BookmarkVO" parameterType="int">
+    SELECT bookmarkno, bookmarkgrpno, name, link, rdate
+    FROM bookmark
+    WHERE bookmarkgrpno = #{bookmarkgrpno}
+    ORDER BY bookmarkno ASC
+  </select>
+  
+  <!-- Categrp + Cate join, 연결 목록 -->
+  <select id="list_all_join" resultType="dev.mvc.bookmark.Bookmarkgrp_BookmarkVO">
+    SELECT r.bookmarkgrpno as r_bookmarkgrpno, r.name as r_name,
+               c.bookmarkno, c.bookmarkgrpno, c.name, c.link, c.rdate
+    FROM bookmarkgrp r, bookmark c
+    WHERE r.bookmarkgrpno = c.bookmarkgrpno
+    ORDER BY bookmarkgrpno ASC, bookmarkno ASC
+  </select>
+  
+  <!-- 조회, id: read, 입력: cateno, 리턴: CateVO -->
+  <select id="read" resultType="dev.mvc.bookmark.BookmarkVO" parameterType="int">
+    SELECT bookmarkno, bookmarkgrpno, name, link, rdate
+    FROM bookmark
+    WHERE bookmarkno=#{bookmarkno}
+  </select>  
+  
+  <update id="update" parameterType="dev.mvc.bookmark.BookmarkVO">
+    UPDATE bookmark
+    SET bookmarkgrpno=#{bookmarkgrpno}, name=#{name}, link=#{link}
+    WHERE bookmarkno = #{bookmarkno}
+  </update>
+  
+   <!-- 삭제, return: int -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM bookmark
+    WHERE bookmarkno = #{bookmarkno}
+  </delete>   
+ 
+  
+  
+  
+</mapper> 

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<!-- dev.mvc.tour.CateDAOInter 패키지에 등록된 interface 명시,
+      패키지명과 인터페이스명은 실제로 존재해야함,
+      Spring이 내부적으로 자동으로 interface를 구현해줌. -->
+<mapper namespace="dev.mvc.tour.TourDAOInter">
+  <insert id="create" parameterType="dev.mvc.tour.TourVO">
+    INSERT INTO tour(tourno, tourgrpno, name, rdate, cnt)
+    VALUES(#{tourno}, #{tourgrpno}, #{name}, now(), 0)
+  </insert> 
+  
+  <!-- 
+  전체 목록
+  레코드 갯수 만큼 CategrpVO 객체를 만들어 ArrayList에 저장하여 리턴,
+  List<CateVO> list = new ArrayList<CateVO>(); 
+  -->
+  <select id="list_all" resultType="dev.mvc.tour.TourVO">
+    SELECT tourno, tourgrpno, name, rdate, cnt
+    FROM tour
+    ORDER BY tourno ASC
+  </select>
+  
+  <!-- 카테고리 그룹별 목록 -->
+  <select id="list_by_tourgrpno" resultType="dev.mvc.tour.TourVO" parameterType="int">
+    SELECT tourno, tourgrpno, name, rdate, cnt
+    FROM tour
+    WHERE tourgrpno = #{tourgrpno}
+    ORDER BY tourno ASC
+  </select>
+  
+  <!-- tourgrp + tour join, 연결 목록 -->
+  <select id="list_all_join" resultType="dev.mvc.tour.Tourgrp_TourVO">
+    SELECT r.tourgrpno as r_tourgrpno, r.name as r_name,
+               c.tourno, c.tourgrpno, c.name, c.rdate, c.cnt
+    FROM tourgrp r, tour c
+    WHERE r.tourgrpno = c.tourgrpno
+    ORDER BY tourgrpno ASC, tourno ASC
+  </select>
+  
+  <!-- 조회, id: read, 입력: cateno, 리턴: CateVO -->
+  <select id="read" resultType="dev.mvc.tour.TourVO" parameterType="int">
+    SELECT tourno, tourgrpno, name, rdate, cnt
+    FROM tour
+    WHERE tourno=#{tourno}
+  </select>  
+  
+  <update id="update" parameterType="dev.mvc.tour.TourVO">
+    UPDATE tour
+    SET tourgrpno=#{tourgrpno}, name=#{name}, cnt=#{cnt}
+    WHERE tourno = #{tourno}
+  </update>
+  
+  <!-- 삭제, return: int -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM tour
+    WHERE tourno = #{tourno}
+  </delete>   
+  
+   <!-- 특정 그룹에 속한 레코드 갯수 산출 -->
+  <select id="count_by_tourgrpno" resultType="int" parameterType="int">
+    SELECT COUNT(*) as cnt 
+    FROM tour
+    WHERE tourgrpno=#{tourgrpno}
+  </select> 
+  
+  <!-- tourgrpno가 같은 모든 레코드 삭제 -->
+  <delete id="delete_by_tourgrpno" parameterType="int">
+    DELETE FROM tour
+    WHERE tourgrpno=#{tourgrpno}
+  </delete>
+
+  
+</mapper>
